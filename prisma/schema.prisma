@@ -12,30 +12,86 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id          Int      @id @default(autoincrement())
-  uuid        String   @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  name        String?
-  email       String
-  todo        Todo[]
-  profile     Profile?
-}
+//enum Role {
+//    ADMIN
+//    USER
+//}
 
-model Todo {
-  id          Int      @id @default(autoincrement())
-  uuid        String   @default(uuid())
-  title       String
-  description String?
-  completed   Boolean? @default(false)
-  userId      Int
-  User        User     @relation(fields: [userId], references: [id])
+model User {
+  id            Int         @id @default(autoincrement())
+  uuid          String      @default(uuid())
+  name          String?
+  email         String      @unique
+  todo          Todo[]
+  post          Post[]
+//roles       Role @default(USER)
+  profile       Profile?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@map("Users")
 }
 
 model Profile {
-  id     Int    @id @default(autoincrement())
-  bio    String
-  user   User   @relation(fields: [userId], references: [id])
-  userId Int
+  id            Int         @id @default(autoincrement())
+  bio           String
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([userId])
+  @@map("Profiles")
+}
+model Post {
+  id            Int          @id @default(autoincrement())
+  uuid          String       @default(uuid())
+  title         String
+  published     Boolean      @default(false)
+  content       String?
+  authorId      Int
+  user          User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categories    CategoriesOnPosts[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@unique([authorId])
+  @@map("Posts")
+}
+
+model Category {
+  id            Int         @id @default(autoincrement())
+  name          String
+  posts         CategoriesOnPosts[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([name])
+  @@map("Categories")
+}
+
+model CategoriesOnPosts {
+  post       Post     @relation(fields: [postId], references: [id])
+  postId     Int // relation scalar field (used in the `@relation` attribute above)
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([postId, categoryId])
+}
+
+model Todo {
+  id            Int         @id @default(autoincrement())
+  uuid          String      @default(uuid())
+  title         String
+  description   String?
+  completed     Boolean?    @default(false)
+  userId        Int
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([userId])
+  @@map("Todos")
 }
