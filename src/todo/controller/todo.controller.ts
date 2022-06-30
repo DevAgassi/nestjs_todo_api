@@ -26,15 +26,15 @@ export class TodoController {
   @Post()
   async createTodo(@Body(UserByIdPipe) postData: CreateTodoDto): Promise<Todo> {
     const {user, userId, ...other} = postData;
-    console.log(user)
+    
     return this.todoService.createTodo({
-      ...other,
-      user: {
+      ...other
+     /* user: {
           connect: {
               id: userId,
           }
-      }
-    });
+      }*/
+    },  user);
   }
 
   @Get(':id')

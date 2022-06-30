@@ -31,8 +31,9 @@ export class TodoService {
     })
 }*/
 
-  async createTodo(data: Prisma.TodoCreateInput): Promise<Todo> {
-    return await this.prisma.todo.create({ data });
+  async createTodo(data: Prisma.TodoCreateWithoutUserInput, user: User): Promise<Todo> {
+    const todo =  {...data, userId: user.id};
+    return await this.prisma.todo.create({ data: todo });
   }
 
   async updateTodo(id: number, data: Prisma.TodoUpdateInput): Promise<Todo> {
