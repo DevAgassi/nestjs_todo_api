@@ -1,4 +1,5 @@
 import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
+import CreateTodoDto from 'src/todo/dto/createTodo.dto';
 import userNotFoundException from '../exceptions/userNotFound.exception';
 import { UserService } from '../user.service';
 
@@ -6,12 +7,12 @@ import { UserService } from '../user.service';
 export class UserByIdPipe implements PipeTransform<any> {
   constructor(private readonly usersService: UserService) {}
 
-  async transform(value: any, metadata: ArgumentMetadata) {
+  async transform(value: CreateTodoDto) {
     const user = await this.usersService.findById(value.userId);
-    if(!user) {
-        throw new userNotFoundException(value.userId);
+    if (!user) {
+      throw new userNotFoundException(value.userId);
     }
 
-    return {...value, user};
+    return { ...value, user };
   }
 }

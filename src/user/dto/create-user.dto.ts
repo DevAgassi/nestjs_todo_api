@@ -1,15 +1,26 @@
-import { IsBoolean, IsEnum, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '../../system/role.enum';
+import { Match } from 'src/decorators/match.decorator.validate';
+import { UniqueEmail } from '../decorators/unique.email.decorator.validate';
 
 export class CreateUserDto {
-  @IsString()
+  @IsEmail()
+  @UniqueEmail()
   @ApiProperty()
-  email;
+  email: string;
 
   @IsString()
   @ApiProperty()
-  password;
+  password: string;
+
+  @IsString()
+  name: string;
+
+  @IsString()
+  @ApiProperty()
+  @Match('password')
+  passwordConfirm: string;
 
   @IsEnum(Role)
   @ApiProperty({
@@ -23,5 +34,5 @@ export class CreateUserDto {
 
   @IsBoolean()
   @ApiProperty({ required: false, default: true })
-  isEnabled?;
+  isEnabled?: boolean;
 }

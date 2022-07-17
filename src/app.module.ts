@@ -1,4 +1,3 @@
-import { APP_FILTER } from '@nestjs/core';
 import { Module, Global } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,10 +9,7 @@ import { UserModule } from './user/user.module';
 @Module({
   imports: [TodoModule, UserModule],
   controllers: [AppController],
-  providers: [
-    AppService,
-    PrismaService,
-  ],
+  providers: [AppService, PrismaService],
   exports: [PrismaService],
 })
 export class AppModule {}

@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { PrismaService } from './prisma/prisma.service';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,12 +22,14 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   const dbService: PrismaService = app.get(PrismaService);
-  dbService.enableShutdownHooks(app)
+  dbService.enableShutdownHooks(app);
 
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
   });
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   await app.listen(9000);
 }
